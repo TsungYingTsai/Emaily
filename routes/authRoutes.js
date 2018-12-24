@@ -7,12 +7,19 @@ module.exports = (app) => {
             scope: ['profile','email']
         })
     );
-
-    app.get('/auth/google/callback', passport.authenticate('google')); // excahnge the code with Google
+    // after authenticate this middleware, the system is not told what to do next, and thst is why system show 'Cannot GET /aut/google/callback'
+    // do need another request to continue on next step
+    app.get(
+        '/auth/google/callback',
+        passport.authenticate('google'),
+        (req, res) => {
+            res.redirect('/surveys'); // why I am here at 5000 can access to 3000 ??
+        }
+    );
 
     app.get('/api/logout', (req, res) => {
         req.logout();
-        res.send(req.user); // empty
+        res.redirect('/');
     })
 
     app.get('/api/current_user', (req, res) => {

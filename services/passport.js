@@ -1,9 +1,11 @@
 const passport = require('passport');
+// whenever we make use of passport, user has signed to our application. req.user will exist
+// in index.js app.use(...initialize() & session())
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const keys = require('../config/keys') // if js document no need to add .js in the end
 const mongoose = require('mongoose')
 
-const User = mongoose.model('user'); // model class
+const User = mongoose.model('user'); // look at ./models/User
 
 passport.serializeUser((user, done) => {
     done(null,user.id);
@@ -28,18 +30,12 @@ passport.use(
             callbackURL: '/auth/google/callback',
             proxy: true
         },
-        (accessToken, refreshToken, profile, done) => {
-            User.findOne({
-                    googleID: profile.id
-                })
-                .then((existingUser) => {
-                    if (existingUser) {
-                        done(null,existingUser);
-                    } else {
-                        new User({googleID: profile.id})
-                            .save()
-                            .then((user) => done(null,user));
-                    }
-                });
-        })
+        async (accessToken, refreshToken, profile, done) => {
+            const existingUser = await User.findOne({googleID: profile.id})
+            if (existingUser) {
+                return done(null, existingUser);
+            }
+            const user = await new User({googleID: profile.id}).save()
+            done(null, user);
+    })
 );

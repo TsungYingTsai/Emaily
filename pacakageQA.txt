@@ -1,0 +1,11 @@
+NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client
+
+first part, NPM_CONFIG_PRODUCTION=false, is to tell heroku (or any deployment platform) we want to install dependencies
+not only on production but also for development side
+
+Before next, something needs to point out first, the way we deploy on development and production are different.
+In local machine, react(client) and nodejs sides can be distinguished and responsible for their own role.
+But in production mode, nodejs needs to be in charge of both client and server sides tasks.
+In this way, trickly, we need to specifically tell heroku to install the dependencies installed in the client side.
+And we also need to build the client side production through nodejs. These are reasons why we do
+npm install --prefix client && npm run build --prefix client here.
