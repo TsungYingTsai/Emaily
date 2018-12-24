@@ -33,7 +33,7 @@ require('./routes/billingRoutes')(app);
 //In production, make sure express server can understand some routes will be asked that it miht not have specific role handler (ex/api/surveys) and behave correctly
 if (process.env.NODE_ENV === 'production') {
     //Expree will serve up production assets like our main.js file, or main.css file
-    app.use(expree.static('client/build'));
+    app.use(express.static('client/build'));
 
     //Express will serve up the index.html if it doesn't recognize the route (ex./api/surveys)
     const path = require('path');
